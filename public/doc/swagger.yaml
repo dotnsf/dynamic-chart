@@ -1,0 +1,76 @@
+swagger: '2.0'
+info:
+  description: Dynamic Chart API ドキュメント
+  version: 0.0.1
+  title: Dynamic Chart APIs
+#host: localhost:8080
+basePath: /api
+tags:
+  - name: chart
+    description: Dynamic Chart APIs
+schemes:
+  - http
+  - https
+paths:
+  /pie:
+    get:
+      tags:
+        - chart
+      summary: 円チャート
+      description: 円チャート取得
+      produces:
+        - image/png
+        - application/json
+      parameters:
+        - name: width
+          type: string
+          in: query
+          description: 幅サイズ
+        - name: height
+          type: string
+          in: query
+          description: 高さサイズ
+        - name: colors
+          type: string
+          in: query
+          description: 色配列(ex. ["#8f8","#ff8"])
+        - name: data
+          type: string
+          in: query
+          description: データ配列(ex. [80,20])
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /doughnut:
+    get:
+      tags:
+        - chart
+      summary: ドーナツチャート
+      description: ドーナツチャート取得
+      produces:
+        - image/png
+        - application/json
+      parameters:
+        - name: width
+          type: string
+          in: query
+          description: 幅サイズ
+        - name: height
+          type: string
+          in: query
+          description: 高さサイズ
+        - name: colors
+          type: string
+          in: query
+          description: 色配列(ex. ["#8f8","#ff8"])
+        - name: data
+          type: string
+          in: query
+          description: データ配列(ex. [80,20])
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
