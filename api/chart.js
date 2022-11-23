@@ -72,7 +72,7 @@ api.pie = function( data, colors, width, height ){
   });
 };
 
-api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height ){
+api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height, display ){
   return new Promise( async function( resolve, reject ){
     try{
       var canvas = createCanvas( width, height );
@@ -82,6 +82,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
       var _max = Math.floor( height * 0.9 );
       var _zero = 0.0;
       var _one = 0.0;
+      var value = '';
 
       if( min == max ){
         //. 指定なし
@@ -107,9 +108,14 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
         _zero = Math.floor( ( height * 0.9 ) + _one * min );
       }
 
+      if( display ){
+        value = '' + ( data.length == 1 ? data[0] : data[1] );
+      }
+
       var x1 = Math.floor( width * 0.2 );
       var x2 = Math.floor( width * 0.8 );
       var ry = Math.floor( height * 0.05 );
+
 
       if( data.length == 1 ){
         //. 実線で円柱を描画
@@ -122,7 +128,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
           y1 = _zero - Math.floor( _one * data[0] );
         }
         //. x1 < x2 && y1 < y2 の条件で円柱を描画
-        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], false );
+        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], false, value );
       }else if( data.length == 2 ){
         //. １つ目を破線で、２つ目を実線で円柱を描画
         var y1, y2;
@@ -133,7 +139,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
           y2 = _zero;
           y1 = _zero - Math.floor( _one * data[0] );
         }
-        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], true );
+        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], true, '' );
 
         if( data[1] < 0 ){
           y2 = _zero - one * data[1];
@@ -142,7 +148,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
           y2 = _zero;
           y1 = _zero - _one * data[1];
         }
-        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[1], fillcolors[1], false );
+        drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[1], fillcolors[1], false, value );
       }
 
       canvas.toBuffer( function( err, buffer ){
@@ -158,7 +164,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
   });
 };
 
-function drawCylinder( ctx, x1, x2, y1, y2, ry, borderColor, fillColor, dashed ){
+function drawCylinder( ctx, x1, x2, y1, y2, ry, borderColor, fillColor, dashed, value ){
   try{
     var x = Math.floor( ( x2 + x1 ) / 2 );
     var rx = x - x1;
@@ -208,6 +214,15 @@ function drawCylinder( ctx, x1, x2, y1, y2, ry, borderColor, fillColor, dashed )
       ctx.fill();
     }
     ctx.stroke();
+
+    //. 5
+    if( value ){
+      var fontsize = 14;
+      ctx.font = 'bold ' + fontsize + "px sans-serif";
+      var textwidth = ctx.measureText( value ).width;
+      ctx.fillStyle = borderColor;
+      ctx.fillText( value, x - ( textwidth / 2 ), y1 );
+    }
   }catch( e ){
     console.log( { e } );
   }
@@ -245,6 +260,7 @@ api.get( '/cylinder', async function( req, res ){
   var bordercolors = req.query.bordercolors ? req.query.bordercolors : '["#f00","#0f0"]';
   var fillcolors = req.query.bordercolors ? req.query.bordercolors : '["#f88","#8f8"]';
   var data = req.query.data ? req.query.data : '[-50,100]';
+  var display = req.query.display ? true : false;
 
   if( width && typeof width == 'string' ){ width = parseInt( width ); }
   if( height && typeof height == 'string' ){ height = parseInt( height ); }
@@ -253,7 +269,7 @@ api.get( '/cylinder', async function( req, res ){
   if( bordercolors && typeof bordercolors == 'string' ){ bordercolors = JSON.parse( bordercolors ); }
   if( fillcolors && typeof fillcolors == 'string' ){ fillcolors = JSON.parse( fillcolors ); }
   if( data && typeof data == 'string' ){ data = JSON.parse( data ); }
-  api.cylinder( data, bordercolors, fillcolors, max, min, width, height ).then( function( result ){
+  api.cylinder( data, bordercolors, fillcolors, max, min, width, height, display ).then( function( result ){
     if( result.status ){
       res.contentType( 'image/png' );
       res.write( result.buffer );

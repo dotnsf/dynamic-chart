@@ -81,6 +81,10 @@ paths:
           type: string
           in: query
           description: データ配列(ex. [-50,100])
+        - name: display
+          type: string
+          in: query
+          description: true であればデータ数値を表示する
       responses:
         '200':
           description: 成功
