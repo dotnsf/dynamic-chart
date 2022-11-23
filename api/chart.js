@@ -103,6 +103,7 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
       }else{
         //. 例えば min = -50, max = 100 の時、0 はどこ？
         _one = ( height * 0.8 ) / ( max - min );
+        //_zero = Math.floor( ( height * 0.9 ) + _one * min );
         _zero = Math.floor( ( height * 0.9 ) + _one * min );
       }
 
@@ -114,11 +115,11 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
         //. 実線で円柱を描画
         var y1, y2;
         if( data[0] < 0 ){
-          y2 = height - _zero;
-          y1 = y2 + Math.floor( _one * data[0] );
+          y2 = _zero - Math.floor( _one * data[0] );
+          y1 = _zero;
         }else{
           y2 = _zero;
-          y1 = y2 - Math.floor( _one * data[0] );
+          y1 = _zero - Math.floor( _one * data[0] );
         }
         //. x1 < x2 && y1 < y2 の条件で円柱を描画
         drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], false );
@@ -126,11 +127,11 @@ api.cylinder = function( data, bordercolors, fillcolors, max, min, width, height
         //. １つ目を破線で、２つ目を実線で円柱を描画
         var y1, y2;
         if( data[0] < 0 ){
-          y2 = _zero - _one * data[0];
+          y2 = _zero - Math.floor( _one * data[0] );
           y1 = _zero;
         }else{
           y2 = _zero;
-          y1 = _zero - _one * data[0];
+          y1 = _zero - Math.floor( _one * data[0] );
         }
         drawCylinder( ctx, x1, x2, y1, y2, ry, bordercolors[0], fillcolors[0], true );
 
