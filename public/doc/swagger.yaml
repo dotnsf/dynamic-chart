@@ -43,6 +43,49 @@ paths:
           description: 成功
         '400':
           description: エラー
+  /cylinder:
+    get:
+      tags:
+        - chart
+      summary: 円柱チャート
+      description: 円柱チャート取得
+      produces:
+        - image/png
+        - application/json
+      parameters:
+        - name: width
+          type: string
+          in: query
+          description: 幅サイズ
+        - name: height
+          type: string
+          in: query
+          description: 高さサイズ
+        - name: min
+          type: string
+          in: query
+          description: 描画時の最小スケール
+        - name: max
+          type: string
+          in: query
+          description: 描画時の最大スケール
+        - name: bordercolors
+          type: string
+          in: query
+          description: 色配列(ex. ["#f00","#0f0"])
+        - name: fillcolors
+          type: string
+          in: query
+          description: 色配列(ex. ["#f88","#8f8"])
+        - name: data
+          type: string
+          in: query
+          description: データ配列(ex. [-50,100])
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
   /doughnut:
     get:
       tags:
